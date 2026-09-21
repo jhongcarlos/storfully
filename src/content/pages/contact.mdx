@@ -1,0 +1,35 @@
+---
+title: "Contact Storfully"
+h1: "Talk to a person."
+description: "Contact Storfully: send a message and hear back within one business day. Email, phone and portal login coming soon."
+primaryQuery: "storfully contact"
+schemaType: ["ContactPage"]
+dateModified: 2026-09-14
+---
+
+import ContactForm from '../../components/ContactForm';
+
+<div class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] isolate -mt-8 sm:-mt-12">
+  <img class="absolute inset-0 w-full h-full object-cover -z-20" src="/generated/contact-hero.jpg" alt="Person waving hello while walking into a bright modern office" />
+  <div class="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/60 -z-10"></div>
+  <div class="container-page py-20 md:py-28">
+    <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+      <div>
+        <span class="inline-block leading-none bg-section text-gray-700 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full mb-5">Contact</span>
+        <h1>Talk to a person.</h1>
+        <p class="text-lg md:text-xl leading-relaxed text-gray-800">
+          Send a message and we'll get back to you within one business day. If you'd rather
+          start with data, get your free visibility audit first.
+        </p>
+        <div class="flex flex-wrap gap-4 mt-6">
+          <a class="btn-secondary no-underline" href="/audit">Get your free visibility audit</a>
+        </div>
+        {/* TODO: direct email, phone and portal login are marked TBD in the Organization schema pending confirmation from Agile & Co (see docs/content-package.md line 192, 877). Not invented here; this page ships as a form-only placeholder until those entity fields are provided. */}
+        <p class="bg-section border-l-4 border-accent rounded-r-lg p-5 text-gray-800 mt-8"><strong class="font-heading">St. Louis, Missouri.</strong> Direct email, phone and portal login are on their way. For now, the fastest way to reach us is the form.</p>
+      </div>
+      <div>
+        <ContactForm client:load />
+      </div>
+    </div>
+  </div>
+</div>

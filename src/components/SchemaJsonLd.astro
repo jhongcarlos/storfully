@@ -1,0 +1,154 @@
+---
+// Builds the JSON-LD graph for a single page from its content-collection entry.
+// Always includes the Organization + WebSite nodes, then layers in
+// page-specific nodes (Service/Offer, FAQPage, Article, DefinedTerm) based on schemaType.
+
+interface Props {
+  url: string;
+  title: string;
+  description: string;
+  schemaType: string[];
+  dateModified: Date;
+  faqs?: { question: string; answer: string }[];
+  offer?: { price: string; priceCurrency: string; unitText: string };
+  serviceName?: string;
+  author?: string;
+  datePublished?: Date;
+  citations?: string[];
+}
+
+const {
+  url,
+  title,
+  description,
+  schemaType,
+  dateModified,
+  faqs = [],
+  offer,
+  serviceName,
+  author,
+  datePublished,
+  citations = [],
+} = Astro.props;
+
+// Core Organization + WebSite + Person nodes — same on every page.
+// telephone and sameAs are still TBD from the client (see Section 8 rulings);
+// omit them entirely rather than publish placeholder strings as if they were
+// real phone numbers / profile URLs, since that would ship invalid data into
+// live JSON-LD (a literal "TBD" is not a valid telephone or sameAs URL).
+const organizationNode: Record<string, unknown> = {
+  '@type': 'Organization',
+  '@id': 'https://storfully.com/#organization',
+  name: 'Storfully',
+  legalName: 'Leap Clixx Inc',
+  alternateName: 'Storfully by Agile & Co',
+  url: 'https://storfully.com',
+  logo: 'https://storfully.com/brand/storfully-primary-logo.png',
+  slogan: 'Self-Storage. Full Potential.',
+  description:
+    "Fixed monthly marketing packages for independent self-storage owners, priced per facility and powered by Core, Agile & Co's proprietary AI engine.",
+  parentOrganization: { '@id': 'https://agileandco.com/#organization' },
+  founder: { '@id': 'https://storfully.com/#chans-weber' },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'St. Louis',
+    addressRegion: 'MO',
+    addressCountry: 'US',
+  },
+  areaServed: 'US',
+};
+
+// TODO: replace once client sends phone + social URLs (see Section 8 open items).
+const TODO_TELEPHONE: string | null = null;
+const TODO_SAME_AS: string[] = [];
+
+if (TODO_TELEPHONE) organizationNode.telephone = TODO_TELEPHONE;
+if (TODO_SAME_AS.length > 0) organizationNode.sameAs = TODO_SAME_AS;
+
+const personNode = {
+  '@type': 'Person',
+  '@id': 'https://storfully.com/#chans-weber',
+  name: 'Chans Weber',
+  jobTitle: 'Founder',
+  worksFor: { '@id': 'https://storfully.com/#organization' },
+  sameAs: ['TBD LinkedIn'],
+};
+
+const websiteNode = {
+  '@type': 'WebSite',
+  '@id': 'https://storfully.com/#website',
+  url: 'https://storfully.com',
+  name: 'Storfully',
+  publisher: { '@id': 'https://storfully.com/#organization' },
+};
+
+const webPageNode = {
+  '@type': 'WebPage',
+  '@id': `${url}#webpage`,
+  url,
+  name: title,
+  description,
+  dateModified: dateModified.toISOString(),
+  isPartOf: { '@id': 'https://storfully.com/#website' },
+};
+
+const graph: Record<string, unknown>[] = [organizationNode, personNode, websiteNode, webPageNode];
+
+if (schemaType.includes('Service')) {
+  const serviceNode: Record<string, unknown> = {
+    '@type': 'Service',
+    '@id': `${url}#service`,
+    name: serviceName ?? title,
+    provider: { '@id': 'https://storfully.com/#organization' },
+    areaServed: 'US',
+    audience: { '@type': 'Audience', audienceType: 'Independent self-storage facility owners' },
+  };
+
+  // Package pages carry a priced Offer; plain service pages (no offer prop) don't,
+  // and shouldn't be dropped from the graph entirely just because they aren't priced.
+  if (offer) {
+    serviceNode.offers = {
+      '@type': 'Offer',
+      price: offer.price,
+      priceCurrency: offer.priceCurrency,
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: offer.price,
+        priceCurrency: offer.priceCurrency,
+        unitText: offer.unitText,
+      },
+      availability: 'https://schema.org/InStock',
+      url,
+    };
+  }
+
+  graph.push(serviceNode);
+}
+
+if (schemaType.includes('FAQPage') && faqs.length > 0) {
+  graph.push({
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  });
+}
+
+if (schemaType.includes('Article') && datePublished) {
+  graph.push({
+    '@type': 'Article',
+    headline: title,
+    author: { '@type': 'Person', name: author ?? 'Chans Weber' },
+    publisher: { '@id': 'https://storfully.com/#organization' },
+    datePublished: datePublished.toISOString(),
+    dateModified: dateModified.toISOString(),
+    citation: citations,
+  });
+}
+
+const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

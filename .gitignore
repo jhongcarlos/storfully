@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.agents/
+.claude/
+.env
+.env.*
+!.env.example

@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply m-0 bg-paper text-ink font-sans text-base leading-relaxed antialiased overflow-x-hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold leading-[1.15] tracking-[-0.015em] text-ink;
+  }
+
+  a {
+    @apply text-accent-dark underline underline-offset-2;
+  }
+
+  a:hover, a:focus-visible {
+    @apply text-ink;
+  }
+
+  a:focus-visible {
+    @apply outline outline-2 outline-accent outline-offset-2;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-container px-6;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-full font-heading font-bold text-base px-7 py-3.5 border-2 border-transparent transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px];
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-white hover:bg-accent-dark;
+  }
+
+  .btn-secondary {
+    @apply btn bg-transparent text-ink border-ink hover:bg-ink hover:text-white;
+  }
+}

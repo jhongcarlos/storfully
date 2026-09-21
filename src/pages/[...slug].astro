@@ -1,0 +1,28 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('pages', ({ slug }) => slug !== 'home');
+  return entries.map((entry) => ({
+    // "packages-10x10" -> "/packages/10x10" — adjust to match the real sitemap paths
+    // as content files are added; this is a starting convention, not a fixed rule.
+    params: { slug: entry.slug.replace('packages-', 'packages/') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  schemaType={entry.data.schemaType}
+  dateModified={entry.data.dateModified}
+  faqs={entry.data.faqs}
+  offer={entry.data.offer}
+>
+  <Content />
+</BaseLayout>

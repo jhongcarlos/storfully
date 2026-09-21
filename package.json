@@ -1,0 +1,26 @@
+{
+  "name": "storfully-website",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/lint-content.mjs && astro build",
+    "preview": "astro preview",
+    "lint:content": "node scripts/lint-content.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^3.1.0",
+    "@astrojs/preact": "3.5.4",
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "3.2.0",
+    "@astrojs/tailwind": "^5.1.5",
+    "astro": "^4.16.0",
+    "preact": "^10.29.8",
+    "tailwindcss": "^3.4.19"
+  },
+  "devDependencies": {
+    "@fal-ai/client": "^1.10.1",
+    "dotenv": "^18.0.1",
+    "playwright": "^1.63.0"
+  }
+}

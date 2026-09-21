@@ -1,0 +1,150 @@
+---
+import SchemaJsonLd from '../components/SchemaJsonLd.astro';
+import '../styles/tailwind.css';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  schemaType: string[];
+  dateModified: Date;
+  faqs?: { question: string; answer: string }[];
+  offer?: { price: string; priceCurrency: string; unitText: string };
+  datePublished?: Date;
+  citations?: string[];
+}
+
+const {
+  title,
+  description,
+  schemaType,
+  dateModified,
+  faqs,
+  offer,
+  datePublished,
+  citations,
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+
+const primaryNav = [
+  { href: '/packages', label: 'Packages' },
+  { href: '/how-it-works', label: 'How it works' },
+  { href: '/results', label: 'Results' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const footerNav = [
+  { href: '/packages', label: 'Packages' },
+  { href: '/services/google-business-profile', label: 'Services' },
+  { href: '/playbook', label: 'Playbook' },
+  { href: '/audit', label: 'Free audit' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/accessibility', label: 'Accessibility' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/brand/storfully-app-icon-blue.png" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <SchemaJsonLd
+      url={canonicalUrl}
+      title={title}
+      description={description}
+      schemaType={schemaType}
+      dateModified={dateModified}
+      faqs={faqs}
+      offer={offer}
+      datePublished={datePublished}
+      citations={citations}
+    />
+  </head>
+  <body>
+    <header class="border-b border-line bg-paper sticky top-0 z-40">
+      <div class="container-page flex flex-wrap items-center justify-between gap-6 py-4">
+        <a href="/" aria-label="Storfully home" class="shrink-0">
+          <img
+            src="/brand/storfully-horizontal-logo.png"
+            alt="Storfully. Self-Storage. Full Potential."
+            width="206"
+            height="60"
+            class="h-8 w-auto block"
+          />
+        </a>
+        <nav aria-label="Primary">
+          <ul class="flex flex-wrap items-center gap-5 m-0 p-0 list-none">
+            {primaryNav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-ink no-underline font-semibold text-[0.95rem] hover:text-accent-dark"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a href="/audit" class="btn-primary py-2 px-4 text-sm no-underline">
+                Free audit
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <div class="site-container">
+        <slot />
+      </div>
+    </main>
+    <footer class="bg-section border-t border-line">
+      <div class="container-page py-10 flex flex-col items-center gap-5 text-center">
+        <nav aria-label="Footer">
+          <ul class="flex flex-wrap justify-center gap-x-6 gap-y-4 m-0 p-0 list-none">
+            {footerNav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-ink no-underline text-[0.9rem] hover:text-accent-dark hover:underline"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <p class="m-0 text-[0.85rem] text-gray-500">
+          Storfully is a division of Agile &amp; Co (Leap Clixx Inc), St. Louis, Missouri. Powered by Core.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
